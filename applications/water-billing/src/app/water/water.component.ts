@@ -23,6 +23,7 @@ type SheetData = {
   styleUrls: ['./water.component.scss']
 })
 export class WaterComponent {
+  public exportHeaders = ['Block', 'Unit', 'Charge Type', 'Charge Description', 'Charge Date', 'Pay by Date', 'Amount']
   public data$ = new ReplaySubject<SheetData | null>();
   public data: SheetData | null = null;
   public dates: Array<Pick<UsageEntry, 'date'>> | null = null;
@@ -35,6 +36,11 @@ export class WaterComponent {
   public calculatedConsumption: number = 0;
   public ohtInput: number = 0;
   public tankerPrice: number = 0;
+  public txtBlock: string = '';
+  public datePeriodFrom: Date = new Date();
+  public datePeriodTo: Date = new Date();
+  public dateChagred: Date = new Date();
+  public datePaymentLast: Date = new Date();
 
   constructor() {
     this.data$.subscribe((data) => {
@@ -142,17 +148,6 @@ export class WaterComponent {
 
   transposeData = (data: SheetTable): SheetData => {
     this.dates = data[0].map(cell => {
-      // let val = Date.now();
-      // try {
-
-      //   val = Date.parse(cell)
-      // } catch {
-      //   val = Date.now();
-      // }
-
-      // return {
-      //   date: new Date(val).toLocaleString('en-IN', { dateStyle: 'medium' })
-      // }
       return { date: cell }
     }).splice(1);
     this.dates = this.dates.slice(0, this.dates.length - 1);
@@ -163,9 +158,30 @@ export class WaterComponent {
       const unit = row[0];
       row = row.splice(1);
       row = row.slice(0, row.length - 1);
-      prev[`Unit ${unit}`] = [...row.map((reading, index) => ({ ...this.dates?.[index], reading: Number(reading), useAverage: false }))];
+      prev[`${unit}`] = [...row.map((reading, index) => ({ ...this.dates?.[index], reading: Number(reading), useAverage: false }))];
       return prev;
     }, finalData)
   }
 
+  export(): void {
+    if (this.data) {
+      let exportData: SheetTable = [this.exportHeaders];
+      // let unitData = this.measuredTotals.map(measured => ([this.txtBlock,]));
+      // let measuredEntries = this.data?.[unit].filter(reading => !reading.useAverage && reading.reading > 0) ?? [];
+      let unitData = Object.keys(this.data).sort().map((unit, index) => {
+        return [this.txtBlock, unit, 'Water Charges', `Water Charges for ${this.datePeriodFrom} to ${this.datePeriodTo}`, this.dateChagred, this.datePaymentLast, this.billed[index]];
+      })
+      exportData.push(...unitData);
+      // console.log(exportData);
+      /* generate worksheet */
+      const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(exportData);
+
+      // /* generate workbook and add the worksheet */
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, this.txtBlock);
+
+      // /* save to file */
+      XLSX.writeFile(wb, `water bill ${this.txtBlock.toLowerCase()} - ${this.datePeriodFrom} to ${this.datePeriodTo}.xlsx`);
+    }
+  }
 }

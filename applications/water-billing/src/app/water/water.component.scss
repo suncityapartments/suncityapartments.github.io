@@ -20,7 +20,7 @@ td {
 }
 
 .data-fields {
-  padding-block: 0.5rem;
+  padding-block-start: 0.5rem;
 }
 
 .scroll-area {
@@ -43,5 +43,27 @@ td {
 }
 
 .field-set {
-  padding-block: 0.25rem;
+  padding: 0.5rem;
+  background-color: #e3e3e3;
+  flex: 1;
+
+  input[type=text],
+  input[type=number],
+  input[type=date] {
+    font-family: inherit;
+    font-size: 1.2rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.45rem;
+    border: 1px solid gray;
+    display: block;
+    margin-top: 0.2rem;
+    width: 100%;
+  }
+  label {
+    color: #3f3f3f;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding-inline-start: 0.25rem;
+  }
+
 }

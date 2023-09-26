@@ -1,22 +1,54 @@
 <div class="data-fields">
-  <div class="field-set">
+  <div style="padding-block: 1rem;">
     Please provide the information below to calculate the water billing for the block.
   </div>
-  <div class="field-set">
-    <input type="file" (change)="onFileChange($event)" />
+  <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+    <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+      <div class="field-set">
+        <input type="file" (change)="onFileChange($event)" style="max-width: 100%; width: 100%;" />
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+      <div class="field-set">
+        <label for="ohtInput">OHT Input (Litres)</label>
+        <input [(ngModel)]="ohtInput" type="number" name="ohtInput" id="ohtInput" (ngModelChange)="updateTotals()">
+      </div>
+      <div class="field-set">
+        <label for="tankerPrice">Tanker Price (Rs.)</label>
+        <input [(ngModel)]="tankerPrice" type="number" name="tankerPrice" id="tankerPrice"
+          (ngModelChange)="updateTotals()">
+        <small><em>on tanker is equal to 6000 ltrs.</em></small>
+      </div>
+      <div class="field-set">
+        <label for="txtBlock">Block Name</label>
+        <input [(ngModel)]="txtBlock" type="text" name="txtBlock" id="txtBlock">
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+      <div class="field-set">
+        <label for="datePeriodFrom">Billing Period From</label>
+        <input [(ngModel)]="datePeriodFrom" type="date" name="datePeriodFrom" id="datePeriodFrom">
+      </div>
+      <div class="field-set">
+        <label for="datePeriodTo">Billing Period From</label>
+        <input [(ngModel)]="datePeriodTo" type="date" name="datePeriodTo" id="datePeriodTo">
+      </div>
+      <div class="field-set">
+        <label for="dateChagred">Charge Date</label>
+        <input [(ngModel)]="dateChagred" type="date" name="dateChagred" id="dateChagred">
+      </div>
+      <div class="field-set">
+        <label for="datePaymentLast">Last Date</label>
+        <input [(ngModel)]="datePaymentLast" type="date" name="datePaymentLast" id="datePaymentLast">
+      </div>
+    </div>
   </div>
-  <div class="field-set">
-    <label for="ohtInput">OHT Input (Litres)</label>
-    <input [(ngModel)]="ohtInput" type="number" name="ohtInput" id="ohtInput" (ngModelChange)="updateTotals()">
-  </div>
-  <div class="field-set">
-    <label for="tankerPrice">Tanker Price (Rs.)</label>
-    <input [(ngModel)]="tankerPrice" type="number" name="tankerPrice" id="tankerPrice" (ngModelChange)="updateTotals()"><br>
-    <small><em>on tanker is equal to 6000 ltrs.</em></small>
-  </div>
-</div>    
+</div>
 <div *ngIf="data">
-  <p style="padding-bottom: 1rem;">Please use the check box to use the average reading for the unit on the given date.</p>
+  <div style="padding-block: 1rem; display: flex; justify-content: space-between;">
+    <span>Please use the check box to use the average reading for the unit on the given date.</span>
+    <div><button (click)="export()">Export</button></div>
+  </div>
   <div class="scroll-area">
     <div>
       <table>
