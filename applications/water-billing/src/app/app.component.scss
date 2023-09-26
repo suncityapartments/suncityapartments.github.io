@@ -1,0 +1,21 @@
+.header {
+  padding: 0.75rem 1.5rem;
+  background-color: royalblue;
+  color: aliceblue;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+a {
+  &.tab {
+    display: inline-block;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    color: black;
+
+    &.selected {
+      border-bottom: 0.25rem solid orangered;
+      color: orangered;
+    }
+  }
+}

@@ -1,0 +1,47 @@
+table,
+th,
+td {
+  // font-family: 'Montserrat';
+  font-family: 'PT Sans', sans-serif;
+  border: 1px solid black;
+  border-collapse: collapse;
+
+  >span {
+    // font-family: 'Montserrat';
+    font-family: 'PT Sans', sans-serif;
+  }
+}
+
+th,
+td {
+  text-wrap: nowrap;
+  text-align: end;
+  padding: 0.25rem 0.5rem;
+}
+
+.data-fields {
+  padding-block: 0.5rem;
+}
+
+.scroll-area {
+  padding-bottom: 1rem;
+  max-width: 100vw;
+  max-height: 100%;
+
+  >div {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+.zero {
+  background-color: lightyellow;
+}
+
+.average {
+  background-color: lightskyblue;
+}
+
+.field-set {
+  padding-block: 0.25rem;
+}
