@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { WaterRoutingModule } from './water-routing.module';
 import { WaterComponent } from './water.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     WaterRoutingModule,
     FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class WaterModule { }
