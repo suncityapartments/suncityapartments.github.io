@@ -1,21 +1,40 @@
-.header {
-  padding: 0.75rem 1.5rem;
+header {
+  padding: 0 1rem;
   background-color: royalblue;
   color: aliceblue;
   font-weight: 500;
   font-size: 1.2rem;
-}
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-a {
-  &.tab {
-    display: inline-block;
-    text-decoration: none;
-    padding: 0.75rem 1.5rem;
-    color: black;
+  ul {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.5rem;
 
-    &.selected {
-      border-bottom: 0.25rem solid orangered;
-      color: orangered;
+    li {
+      list-style: none;
+      display: inline-block;
+    }
+  }
+
+  a {
+    font-weight: 400!important;
+    font-size: 1rem;
+    &.tab {
+      display: inline-block;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      color: #fff9;
+
+      &.selected {
+        border-bottom: 0.5rem solid #fff;
+        border-left: 0.5rem solid transparent;
+        border-right: 0.5rem solid transparent;
+        color: #fff;
+      }
     }
   }
 }

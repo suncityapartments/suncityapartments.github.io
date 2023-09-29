@@ -1,99 +1,15 @@
-table,
-th,
-td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
 
-th,
-td {
-  text-wrap: nowrap;
-  text-align: end;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.9rem;
-}
 
-thead > tr > th {
-  background-color: #d2dcf9; 
-  font-weight: 400!important;
-}
+a {
+  &.tab {
+    display: inline-block;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    color: black;
 
-.data-fields {
-  padding-block-start: 0.5rem;
-}
-
-.scroll-area {
-  padding-bottom: 1rem;
-  max-width: 100vw;
-  max-height: 100%;
-
-  >div {
-    max-width: 100%;
-    overflow-x: auto;
+    &.selected {
+      border-bottom: 0.25rem solid orangered;
+      color: orangered;
+    }
   }
-}
-
-.button {
-  display: inline-block;
-  cursor: pointer;
-  appearance: none;
-  border-radius: 0.45rem;
-  border: 1px solid blue;
-  font-family: inherit;
-  font-size: 1rem;
-  padding: 0.5rem 1.25rem !important;
-  background-color: royalblue;
-  color: aliceblue!important;
-  line-height: 1.5rem;
-  font-weight: 400!important;
-  letter-spacing: 1px;
-  &:disabled {
-    background-color: lightgray;
-    border: 1px solid gray;
-  }
-}
-
-.common-usage{
-  background-color: lightgray;  
-}
-
-.zero {
-  background-color: lightyellow;
-}
-
-.exceptional {
-  background-color: lightpink;
-}
-
-.average {
-  background-color: lightskyblue;
-}
-
-.field-set {
-  padding: 0.5rem;
-  background-color: #e3e3e3;
-  flex: 1;
-
-  select,
-  input[type=text],
-  input[type=number],
-  input[type=date] {
-    line-height: 1.5rem;
-    font-size: 1rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.45rem;
-    border: 1px solid gray;
-    display: block;
-    margin-top: 0.2rem;
-    width: 100%;
-    height: 2.75rem;
-  }
-
-  label {
-    color: #3f3f3f;
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding-inline-start: 0.25rem;
-  }
-
 }

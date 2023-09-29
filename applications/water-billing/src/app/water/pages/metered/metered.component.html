@@ -1,0 +1,175 @@
+<div class="data-fields">
+  <div style="padding-block: 1rem;">
+    Please provide the information below to calculate the water billing for the block.
+  </div>
+  <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+    <div
+      style="display: flex; flex-direction: column; gap: 0.25rem; flex-grow: 1; border: 1px solid black; padding: 0.25rem; border-radius: 0.25rem;">
+      <div style="padding: 0.25rem 0.5rem;">
+        <span>Import and Calculations</span>
+      </div>
+      <div class="field-set">
+        <label for="ohtInput">OHT Input (Litres)</label>
+        <input [(ngModel)]="ohtInput" type="number" name="ohtInput" id="ohtInput" (ngModelChange)="updateTotals()">
+      </div>
+      <div class="field-set">
+        <label for="tankerPrice">Tanker Price (Rs.) <small><em>one tanker is equal to 6000 ltrs.</em></small></label>
+        <input [(ngModel)]="tankerPrice" type="number" name="tankerPrice" id="tankerPrice"
+          (ngModelChange)="updateTotals()">
+      </div>
+      <div class="field-set">
+        <label for="importFile">Vendor Report</label><br>
+        <label for="importFile" class="button" style="display: inline-block; margin-top: 0.2rem;">Select File
+          <input name="importFile" id="importFile" type="file" (change)="onFileChange($event)"
+            style="max-width: 100%; width: 100%; display: none;" />
+        </label>
+      </div>
+    </div>
+    <form [formGroup]="exportForm"
+      style="display: flex; flex-direction: column; gap: 0.25rem; flex-grow: 2; border: 1px solid black; padding: 0.25rem; border-radius: 0.25rem;">
+      <div style="padding: 0.25rem 0.5rem;">
+        <span>Export Configurations</span>
+      </div>
+      <div class="field-set">
+        <label for="txtBlock">Block Name</label>
+        <!-- <input [(ngModel)]="txtBlock" type="text" name="txtBlock" id="txtBlock"> -->
+        <select name="txtBlock" id="txtBlock" formControlName="blockName">
+          <option ngValue="" hidden>Select</option>
+          <option *ngFor="let block of blocks" [ngValue]="block.block">{{block.block}}</option>
+        </select>
+      </div>
+      <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+        <div class="field-set">
+          <label for="datePeriodFrom">Billing Period From</label>
+          <input formControlName="billingFrom" type="date" name="datePeriodFrom" id="datePeriodFrom">
+        </div>
+        <div class="field-set">
+          <label for="datePeriodTo">Billing Period From</label>
+          <input formControlName="billingTo" type="date" name="datePeriodTo" id="datePeriodTo">
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+        <div class="field-set">
+          <label for="dateChagred">Charge Date</label>
+          <input formControlName="billingDate" type="date" name="dateChagred" id="dateChagred">
+        </div>
+        <div class="field-set">
+          <label for="datePaymentLast">Last Date</label>
+          <input formControlName="dueDate" type="date" name="datePaymentLast" id="datePaymentLast">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div *ngIf="data">
+  <div style="padding-block: 1rem; display: flex; justify-content: space-between; align-items: center;">
+    <span>Please use the check box to use the average reading for the unit on the given date.</span>
+    <div>
+      <button (click)="export()" class="button" [disabled]="!exportForm.valid">Export</button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Serial</th>
+            <th>Is Common Usage</th>
+            <th>Unit Number</th>
+            <th>Unit Average</th>
+            <th>Metered Total</th>
+            <th>Averaged Total</th>
+            <th *ngIf="ohtInput">Variation</th>
+            <th *ngIf="commonUsageUnits?.length">Common Usage Share</th>
+            <th>Billable</th>
+            <th *ngIf="tankerPrice">Billed Amount</th>
+            <th *ngFor="let val of dates">
+              <label style="cursor: pointer;">
+                {{val.date}}
+                <input type="checkbox" (click)="useAverageForDateChanged($event, val.date)" />
+              </label>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of data | keyvalue; let i = index" [ngClass]="{'common-usage': row.value.isCommon}">
+            <td>
+              {{i + 1}}
+            </td>
+            <td>
+              <span>
+                <input type="checkbox" [checked]="row.value.isCommon" (click)="commonUsageChanged($event, row.key)" />
+              </span>
+            </td>
+            <td>
+              {{row.key}}
+            </td>
+            <td>
+              {{averages[i].toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
+            </td>
+            <td>
+              {{measuredTotals[i].toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
+            </td>
+            <td>
+              {{averagedTotals[i].toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
+            </td>
+            <td *ngIf="ohtInput">
+              {{variations[i].toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
+            </td>
+            <td *ngIf="commonUsageUnits?.length">
+              {{commonUsageShares[i].toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
+            </td>
+            <td>
+              {{billable[i].toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
+            </td>
+            <td *ngIf="tankerPrice">
+              {{billed[i].toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
+            </td>
+            <td *ngFor="let val of row.value.usage"
+              [ngClass]="{'zero': !val.reading, 'exceptional': val.reading > averages[i] * 2.5 || val.reading < 0, 'average': val.useAverage}">
+              <label style="cursor: pointer;">
+                {{(val.useAverage ? averages[i] : val.reading).toLocaleString('en-IN', { minimumIntegerDigits: 1,
+                maximumFractionDigits:2, minimumFractionDigits: 2 }) }}
+                <input type="checkbox" [checked]="val.useAverage"
+                  (click)="useAverageChanged($event, row.key, val.date)" />
+              </label>
+            </td>
+          </tr>
+          <tr style="border-top: 5px double #333;">
+            <td colspan="4">
+              <strong>Calculated Consumption:</strong>
+              <br>
+              <small>(Sum of Metered Totals and Averaged Totals)</small>
+            </td>
+            <td colspan="2">
+              {{calculatedConsumption.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
+              <br>
+              <small>(Litres)</small>
+            </td>
+          </tr>
+          <tr *ngIf="ohtInput" style="border-top: 5px double #333;">
+            <td colspan="4">
+              <strong>Consumption Variation:</strong>
+              <br>
+              <small>(OHT Input - Calculated)</small>
+            </td>
+            <td colspan="2">
+              {{(ohtInput ? ohtInput - calculatedConsumption : 0).toLocaleString('en-IN', { minimumIntegerDigits: 1,
+              maximumFractionDigits:2, minimumFractionDigits: 2 })}}
+              <br>
+              <small>(Litres)</small>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
