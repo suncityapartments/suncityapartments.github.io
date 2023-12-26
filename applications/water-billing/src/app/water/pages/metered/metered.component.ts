@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import * as XLSX from 'xlsx';
-import { Data } from '../../data';
+
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-type SheetTable = any[][];
+import { Data } from '../../data';
+
+type SheetTable = Array<Array<any>>;
 
 type UsageEntry = {
   date: string;
@@ -15,48 +17,47 @@ type UsageEntry = {
 type UnitUsage = Array<UsageEntry>;
 
 type Unit = {
-  name: string;
+  unitName: string;
   isCommon: boolean;
   usage: UnitUsage;
+  measuredTotal: number;
+  averagedTotal: number;
+  unitAverage: number;
+  variation: number;
+  billable: number;
+  commonShare: number;
+  billed: number;
 };
 
-type SheetData = {
-  [unit: string]: Unit;
-}
+type Sheet = Array<Unit>;
+
 @Component({
   selector: 'saoa-metered',
   templateUrl: './metered.component.html',
-  styleUrls: ['./metered.component.scss']
+  styleUrls: ['./metered.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MeteredComponent {
-  public blocks = Data.blocks;
-  public exportHeaders = ['Block', 'Unit', 'Charge Type', 'Charge Description', 'Charge Date', 'Pay by Date', 'Amount']
-  public data$ = new ReplaySubject<SheetData | null>();
-  public data: SheetData | null = null;
-  public commonUsageUnits: Array<Unit> = [];
-  public dates: Array<Pick<UsageEntry, 'date'>> | null = null;
-  public measuredTotals: Array<number> = Array.from(Array(1), () => (0));
-  public averagedTotals: Array<number> = Array.from(Array(1), () => (0));
-  public averages: Array<number> = Array.from(Array(1), () => (0));
-  public variations: Array<number> = Array.from(Array(1), () => (0));
-  public commonUsageShares: Array<number> = Array.from(Array(1), () => (0));
-  public billable: Array<number> = Array.from(Array(1), () => (0));
-  public billed: Array<number> = Array.from(Array(1), () => (0));
-  public calculatedConsumption: number = 0;
-  public ohtInput: number = 0;
-  public tankerPrice: number = 0;
-  public txtBlock: string = '';
-  public datePeriodFrom: Date = new Date();
-  public datePeriodTo: Date = new Date();
-  public dateChagred: Date = new Date();
-  public datePaymentLast: Date = new Date();
-  public exportForm: FormGroup
+  public blockList = Data.blockList;
+  public sheet$ = new ReplaySubject<Sheet>();
+  public sheet: Sheet | null = null;
+  public importHeaders: Array<string> = [];
+  public calculatedConsumption = 0;
+  public importForm: FormGroup;
+  public exportForm: FormGroup;
   public formsBuilder = inject(FormBuilder);
+  public changeDetectionRef = inject(ChangeDetectorRef);
+  public commonUsageUnits = 0;
 
   constructor() {
-    this.data$.subscribe((data) => {
-      this.data = data;
-      this.updateTotals();
+    this.sheet$.subscribe((sheet) => {
+      this.sheet = sheet;
+      this.updateCalculations();
+      this.changeDetectionRef.detectChanges();
+    });
+    this.importForm = this.formsBuilder.group({
+      ohtInput: new FormControl(null, { updateOn: 'blur', validators: [Validators.required] }),
+      tankerPrice: new FormControl(null, { updateOn: 'blur', validators: [Validators.required] }),
     });
     this.exportForm = this.formsBuilder.group({
       blockName: new FormControl(null, { validators: [Validators.required] }),
@@ -77,16 +78,14 @@ export class MeteredComponent {
         // read workbook
         const bstr: string = e.target.result;
         const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
-
         // grab first sheet
-        const wsname: string = wb.SheetNames[0];
-        const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-
+        const worksheetName: string = wb.SheetNames[0];
+        const ws: XLSX.WorkSheet = wb.Sheets[worksheetName];
         // save data
         const data = <SheetTable>XLSX.utils.sheet_to_json(ws, { header: 1 });
 
         // set the data
-        this.data$.next(this.transposeData(data));
+        this.sheet$.next(this.parseData(data));
       } catch (error) {
         console.log(error);
       }
@@ -94,176 +93,167 @@ export class MeteredComponent {
 
     // read the file
     if (target.files[0]) {
-      if (this.data) this.data$.next(null);
       reader.readAsBinaryString(target.files[0]);
     }
   }
 
-  updateTotals = () => {
-    if (this.data) {
-      this.commonUsageUnits = Object.keys(this.data)
-        .sort()
-        .filter(unit => this.data?.[unit].isCommon)
-        .map(unit => this.data![unit]);
+  updateCalculations = () => {
+    this.sheet?.forEach(unitData => {
+      const unitMeasuredEntries = unitData.usage.filter(reading => !reading.useAverage && reading.reading > 0) ?? [];
+      const averagedEntries = unitData.usage.filter(reading => reading.useAverage) ?? [];
+      unitData.measuredTotal = unitMeasuredEntries.reduce((prev, curr) => prev + curr.reading, 0);
+      unitData.unitAverage = (unitMeasuredEntries.length > 0 ? Math.ceil(unitData.measuredTotal / unitMeasuredEntries.length) : 0);
+      unitData.averagedTotal = averagedEntries.length * unitData.unitAverage;
+    });
+    this.commonUsageUnits = this.sheet?.filter(unit => unit.isCommon).length ?? 0;
+    const sumMeasuredTotals = this.sheet?.reduce((prev, curr) => (prev + curr.measuredTotal), 0);
+    const sumAveragedTotals = this.sheet?.reduce((prev, curr) => (prev + curr.averagedTotal), 0);
+    this.calculatedConsumption = (sumMeasuredTotals ?? 0) + (sumAveragedTotals ?? 0);
 
-      Object.keys(this.data)
-        .sort()
-        .forEach((unit, index) => {
-          // measured entries of given unit
-          let measuredEntries = this.data?.[unit].usage.filter(reading => !reading.useAverage && reading.reading > 0) ?? [];
-
-          // averaged entries of given unit
-          let averagedEntries = this.data?.[unit].usage.filter(reading => reading.useAverage) ?? [];
-
-          // calculate the total of all the measured readings
-          let measuredTotalForUnit = measuredEntries.reduce((prev, curr) => prev + curr.reading, 0);
-
-          // calculate average of a unit
-          let averageForUnit = measuredEntries.length > 0 ? Math.ceil(measuredTotalForUnit / measuredEntries.length) : 0;
-
-          // calculate the total of all the measured readings
-          let averageTotalForUnit = averagedEntries.reduce((prev) => prev + averageForUnit, 0);
-          this.averages[index] = averageForUnit;
-
-          this.measuredTotals[index] = measuredTotalForUnit ?? 0;
-          this.averagedTotals[index] = averageTotalForUnit ?? 0;
-        });
-      const sumMeasuredTotals = this.measuredTotals.reduce((prev, curr) => (prev + curr), 0);
-      const sumAveragedTotals = this.averagedTotals.reduce((prev, curr) => (prev + curr), 0);
-      this.calculatedConsumption = sumMeasuredTotals + sumAveragedTotals;
-
-      if (!!this.ohtInput) {
-        const ohtVariation = Number(this.ohtInput) - this.calculatedConsumption
-        this.variations = this.measuredTotals.map((measured, index) => Math.ceil(((measured + this.averagedTotals[index]) / this.calculatedConsumption * ohtVariation)));
-      }
-
-      // get the billable without common usage
-      let billable = this.measuredTotals.map((measured, index) => Math.ceil(((measured + this.averagedTotals[index] + (this.ohtInput ? this.variations[index] : 0)))));
-
-      if (this.commonUsageUnits.length > 0) {
-        const commonUsageTotal = this.billable.reduce((prev, curr, index) => {
-          if (this.data && this.data?.[Object.keys(this.data).sort()[index]].isCommon) {
-            prev += curr;
-          }
-          return prev;
-        }, 0);
-
-        const commonUsageShare = Math.ceil(commonUsageTotal / (this.measuredTotals.length - this.commonUsageUnits.length));
-
-        this.commonUsageShares = this.measuredTotals.map((measured, index) => (this.data && this.data?.[Object.keys(this.data).sort()[index]].isCommon) ? 0 : commonUsageShare)
-
-        billable = billable.map((amount, index) => amount + this.commonUsageShares[index]);
-      }
-
-      this.billable = billable;
-
-      if (!!this.tankerPrice) {
-        this.billed = this.measuredTotals.map((measured, index) => Math.ceil(this.billable[index] * this.tankerPrice / 6000));
-      }
-    } else {
-      this.data = null
-      this.measuredTotals = Array.from(Array(1), () => (0));
-      this.averages = Array.from(Array(1), () => (0));
-      this.variations = Array.from(Array(1), () => (0));
-      this.averagedTotals = Array.from(Array(1), () => (0));
-      this.commonUsageShares = Array.from(Array(1), () => (0));
-      this.commonUsageUnits = [];
-      this.calculatedConsumption = 0;
+    if (this.importForm.value.ohtInput) {
+      const ohtVariation = Number(this.importForm.value.ohtInput) - this.calculatedConsumption;
+      this.sheet?.forEach(unitData => {
+        unitData.variation = Math.ceil((unitData.measuredTotal + unitData.averagedTotal) / this.calculatedConsumption * ohtVariation);
+      });
     }
-  }
 
-  commonUsageChanged = (event: Event, unit: string) => {
+    // calculate the billable without common usage
+    this.sheet?.forEach(unitData => {
+      unitData.billable = unitData.measuredTotal + unitData.averagedTotal + (this.importForm.value.ohtInput ? unitData.variation : 0);
+    });
+
+    if (this.sheet && this.commonUsageUnits) {
+      const commonUsageTotal = this.sheet.filter(unit => unit.isCommon).reduce((prev, curr) => {
+        prev += curr.billable;
+
+        return prev;
+      }, 0);
+
+      const commonUsageShare = Math.ceil(commonUsageTotal / (this.sheet.length - this.commonUsageUnits));
+
+      this.sheet.forEach(unit => {
+        unit.commonShare = unit.isCommon ? 0 : commonUsageShare;
+      });
+
+      this.sheet?.forEach(unitData => {
+        unitData.billable = unitData.billable + unitData.commonShare;
+      });
+    }
+
+    if (this.importForm.value.tankerPrice) {
+      this.sheet?.forEach(unitData => {
+        unitData.billed = Math.ceil(unitData.billable * this.importForm.value.tankerPrice / 6000);
+      });
+    }
+  };
+
+  commonUsageChanged = (event: Event, unit: Unit) => {
     const commonUsageCheckbox = event.currentTarget as HTMLInputElement;
-    this.data$.next(this.updateCommonUsage(this.data!, commonUsageCheckbox.checked, unit));
-  }
+    this.updateCommonUsage(unit.unitName, commonUsageCheckbox.checked);
+  };
 
-  useAverageChanged = (event: Event, unit: string, date: string) => {
+  useAverageChanged = (event: Event, unitName: string, date: string) => {
     const useAverageCheckbox = event.currentTarget as HTMLInputElement;
-    this.data$.next(this.updateData(this.data!, useAverageCheckbox.checked, unit, date));
-  }
+    this.updateData(unitName, date, useAverageCheckbox.checked);
+  };
 
   useAverageForDateChanged = (event: Event, date: string) => {
     const useAverageForDateCheckbox = event.currentTarget as HTMLInputElement;
-    this.data$.next(this.updateDataForDate(this.data!, useAverageForDateCheckbox.checked, date));
-  }
+    this.updateDataForDate(date, useAverageForDateCheckbox.checked);
+  };
 
-  updateCommonUsage = (data: SheetData, checked: boolean, unit: string) => {
-    if (data[unit]) {
-      data[unit].isCommon = checked;
+  updateCommonUsage = (unitName: string, checked: boolean) => {
+    if (this.sheet) {
+      const unit = this.sheet?.find(unit => unit.unitName === unitName);
+
+      if (unit) {
+        unit.isCommon = checked;
+
+        this.sheet$.next(this.sheet);
+      }
     }
-    return data;
-  }
+  };
 
-  updateData = (data: SheetData, checked: boolean, unit: string, date: string) => {
-    if (data[unit]) {
-      let readings = data[unit].usage as Array<any>
-      let reading = readings.find(reading => reading.date === date);
-      if (reading) {
-        reading.useAverage = checked;
-      };
+  updateData = (unitName: string, date: string, checked: boolean) => {
+    if (this.sheet) {
+      const unit = this.sheet?.find(unit => unit.unitName === unitName);
+      const usage = unit?.usage.find(usage => usage.date === date);
+
+      if (usage) {
+        usage.useAverage = checked;
+
+        this.sheet$.next(this.sheet);
+      }
     }
-    return data;
-  }
+  };
 
-  updateDataForDate = (data: SheetData, checked: boolean, date: string) => {
-    if (data) {
-      Object.keys(data).forEach((unit) => {
-        let unitData = data[unit].usage;
-        let entry = unitData.find(entry => entry.date === date);
-        if (entry) {
-          entry.useAverage = checked;
+  updateDataForDate = (date: string, checked: boolean) => {
+    let changed = false;
+
+    if (this.sheet) {
+      this.sheet.forEach((unit => {
+        const usage = unit.usage.find(usage => usage.date === date);
+
+        if (usage) {
+          changed = true;
+          usage.useAverage = checked;
         }
-      })
+      }));
+
+      if (changed) {
+        this.sheet$.next(this.sheet);
+      }
     }
-    return data;
-  }
+  };
 
-  transposeData = (data: SheetTable): SheetData => {
-    this.dates = data[0].map(cell => {
-      return { date: cell }
-    }).splice(1);
-    this.dates = this.dates.slice(0, this.dates.length - 1);
-    data = data.splice(1);
+  parseData = (sheetTable: SheetTable): Sheet => {
+    const headerRow = sheetTable.splice(0, 1)[0].splice(1);
+    this.importHeaders = headerRow.splice(0, headerRow.length - 1);
+    const sheet: Sheet = sheetTable.map(row => {
+      const unitName = row.splice(0, 1)[0];
 
-    const finalData: SheetData = {};
-    return data.reduce((prev: any, row, index): SheetData => {
-      const unit = row[0];
-      row = row.splice(1);
-      row = row.slice(0, row.length - 1);
-      prev[`${unit}`] = {
-        name: unit,
+      return {
+        unitName,
         isCommon: false,
-        usage: [...row.map((reading, index) => ({ ...this.dates?.[index], reading: Number(reading), useAverage: false }))]
-      };
-      return prev;
-    }, finalData)
-  }
+        usage: row.splice(0, row.length - 1).map((reading, i) => ({ date: this.importHeaders[i], reading, useAverage: false })),
+      } as Unit;
+    });
 
-  export(): void {
-    if (this.data) {
-      let exportData: SheetTable = [this.exportHeaders];
+    return sheet;
+  };
 
-      console.log(this.data);
+  // export(): void { 
+  //   const exportHeaders = ['Block', 'Unit', 'Charge Type', 'Charge Description', 'Charge Date', 'Pay by Date', 'Amount'];
+  //   if (this.data) {
+  //     let exportData: SheetTable = [exportHeaders];
 
-      let unitData = Object.keys(this.data).sort()
-        .map((unit, index) => {
-          return [this.exportForm.value.blockName, unit, 'Water Charges', `Water Charges for ${this.exportForm.value.billingFrom} to ${this.exportForm.value.billingTo}`, this.exportForm.value.billingDate, this.exportForm.value.dueDate, this.billed[index]];
-        })
-        .filter(unit => {
-          console.log(unit, unit[0]);
-          return !this.data?.[unit[1]]?.isCommon
-        });
-      exportData.push(...unitData);
+  //     console.log(this.data);
 
-      /* generate worksheet */
-      const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(exportData);
+  //     let unitData = Object.keys(this.data).sort()
+  //       .map((unit, index) => {
+  //         return [this.exportForm.value.blockName, unit, 'Water Charges', `Water Charges for ${this.exportForm.value.billingFrom} to ${this.exportForm.value.billingTo}`, this.exportForm.value.billingDate, this.exportForm.value.dueDate, this.billed[index]];
+  //       })
+  //       .filter(unit => {
+  //         console.log(unit, unit[0]);
+  //         return !this.data?.[unit[1]]?.isCommon
+  //       });
+  //     exportData.push(...unitData);
 
-      // /* generate workbook and add the worksheet */
-      const wb: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, this.exportForm.value.blockName);
+  //     /* generate worksheet */
+  //     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(exportData);
 
-      // /* save to file */
-      XLSX.writeFile(wb, `water bill ${this.exportForm.value.blockName.toLowerCase()} - ${this.exportForm.value.billingFrom} to ${this.exportForm.value.billingTo}.xlsx`);
+  //     // /* generate workbook and add the worksheet */
+  //     const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  //     XLSX.utils.book_append_sheet(wb, ws, this.exportForm.value.blockName);
+
+  //     // /* save to file */
+  //     XLSX.writeFile(wb, `water bill ${this.exportForm.value.blockName.toLowerCase()} - ${this.exportForm.value.billingFrom} to ${this.exportForm.value.billingTo}.xlsx`);
+  //   }
+  // }
+
+  canSelectReport = (event: Event) => {
+    if (!this.importForm.valid) {
+      event.preventDefault();
     }
-  }
+  };
 }

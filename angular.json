@@ -76,6 +76,7 @@
               "outputHashing": "all"
             },
             "development": {
+              "outputHashing": "all",
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -90,10 +91,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "water-billing:build:production"
+              "buildTarget": "water-billing:build:production"
             },
             "development": {
-              "browserTarget": "water-billing:build:development"
+              "buildTarget": "water-billing:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -101,7 +102,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "water-billing:build"
+            "buildTarget": "water-billing:build"
           }
         }
       }

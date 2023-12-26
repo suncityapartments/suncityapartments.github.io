@@ -1,4 +1,4 @@
-export const blocks = [
+export const blockList = [
   {
     block: '01 - Magic Ray',
   },
@@ -62,4 +62,4 @@ export const blocks = [
   {
     block: '21 - Zephyr',
   },
-]
+];

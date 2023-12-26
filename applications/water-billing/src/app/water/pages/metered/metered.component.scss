@@ -13,9 +13,29 @@ td {
   font-size: 0.9rem;
 }
 
-thead > tr > th {
-  background-color: #d2dcf9; 
-  font-weight: 400!important;
+tr:hover {
+  background-color: lightgray;
+
+  .common-usage {
+    background-color: hsl(0, 0%, 75%);
+  }
+
+  .zero {
+    background-color: hsl(60, 75%, 75%);
+  }
+
+  .exceptional {
+    background-color: hsl(351 75% 75%);
+  }
+
+  .average {
+    background-color: hsl(203, 75%, 75%);
+  }
+}
+
+tr>th {
+  background-color: #d2dcf9;
+  font-weight: 400 !important;
 }
 
 .data-fields {
@@ -43,30 +63,33 @@ thead > tr > th {
   font-size: 1rem;
   padding: 0.5rem 1.25rem !important;
   background-color: royalblue;
-  color: aliceblue!important;
+  color: aliceblue !important;
   line-height: 1.5rem;
-  font-weight: 400!important;
+  font-weight: 400 !important;
   height: 2.75rem;
-  &:disabled {
+
+  &:disabled,
+  &.disabled {
     background-color: lightgray;
     border: 1px solid gray;
+    cursor: default;
   }
 }
 
-.common-usage{
-  background-color: lightgray;  
+.common-usage {
+  background-color: hsl(0, 0%, 90%);
 }
 
 .zero {
-  background-color: lightyellow;
+  background-color: hsl(60, 75%, 90%);
 }
 
 .exceptional {
-  background-color: lightpink;
+  background-color: hsl(351 75% 90%);
 }
 
 .average {
-  background-color: lightskyblue;
+  background-color: hsl(203, 75%, 90%);
 }
 
 .field-set {
