@@ -18,8 +18,7 @@
       </div>
       <div class="field-set">
         <label for="importFile">Vendor Report</label><br>
-        <label for="importFile" class="button" [ngClass]="{'disabled': !importForm.valid}"
-          style="display: inline-block; margin-top: 0.2rem;">Select File
+        <label for="importFile" class="button" style="display: inline-block; margin-top: 0.2rem;">Select File
           <input name="importFile" id="importFile" type="file" (change)="onFileChange($event)" (click)="canSelectReport($event)"
             style="max-width: 100%; width: 100%; display: none;" />
         </label>
@@ -64,7 +63,7 @@
   <div style="padding-block: 1rem; display: flex; justify-content: space-between; align-items: center;">
     <span>Please use the check box to use the average reading for the unit on the given date.</span>
     <div>
-      <!-- <button (click)="export()" class="button" [disabled]="!exportForm.valid">Export</button> -->
+      <button (click)="export()" class="button" [disabled]="!exportForm.valid">Export</button>
     </div>
   </div>
   <div class="scroll-area">
@@ -98,62 +97,59 @@
         </tr>
         <tr>
           <th>Serial</th>
-          <th>Is Common Usage</th>
-          <th>Unit Number</th>
-          <th>Unit Average</th>
-          <th>Metered Total</th>
+          <th>Unit</th>
+          <th>Is Common Meter</th>
+          <th>Metered</th>
+          <th>Meter Variation Share</th>
+          <th>Daily Average</th>
           <th>Averaged Total</th>
-          <th>Variation</th>
-          <th>Common Usage Share</th>
-          <th>Billable</th>
+          <th>Common Meter Share</th>
+          <th>Billable Consumption</th>
           <th>Billed Amount</th>
-          <th *ngFor="let val of importHeaders">
+          <th *ngFor="let date of dates">
             <label style="cursor: pointer;">
-              {{val}}
-              <input type="checkbox" (click)="useAverageForDateChanged($event, val)" />
+              {{date}}
+              <input type="checkbox" (click)="useAverageForDateChanged($event, date)" />
             </label>
           </th>
         </tr>
         <tbody>
-          <tr *ngFor="let row of sheet; let i = index" [ngClass]="{'common-usage': row.isCommon}">
-            <td>
+          <tr *ngFor="let unit of sheet; let i = index" [ngClass]="{'common-usage': unit.isCommon}">
+            <td> <!-- Serial -->
               {{i + 1}}
             </td>
             <td>
-              <span>
-                <input type="checkbox" [checked]="row.isCommon" (click)="commonUsageChanged($event, row)" />
-              </span>
+              {{unit.unitName}}
+            </td>
+            <td> <!-- Is Common Meter -->
+              <input type="checkbox" [checked]="unit.isCommon" (click)="commonUsageChanged($event, unit)" />
             </td>
             <td>
-              {{row.unitName}}
+              {{unit.measuredTotal.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2, minimumFractionDigits: 2 })}}
             </td>
             <td>
-              {{row.unitAverage.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2, minimumFractionDigits: 2 })}}
+              {{unit.unitAverage.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2, minimumFractionDigits: 2 })}}
             </td>
             <td>
-              {{row.measuredTotal.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2, minimumFractionDigits: 2 })}}
+              {{unit.averagedTotal.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2, minimumFractionDigits: 2 })}}
             </td>
             <td>
-              {{row.averagedTotal.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2, minimumFractionDigits: 2 })}}
+              {{(commonUsageUnits?unit.commonShare:0).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
             </td>
             <td>
-              {{(importForm.value.ohtInput?row.variation:0).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2, minimumFractionDigits: 2 })}}
+              {{unit.billable.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2, minimumFractionDigits: 2 })}}
             </td>
             <td>
-              {{(commonUsageUnits?row.commonShare:0).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2, minimumFractionDigits: 2 })}}
+              {{(importForm.value.tankerPrice?unit.billed:0).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+              minimumFractionDigits: 2 })}}
             </td>
-            <td>
-              {{row.billable.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2, minimumFractionDigits: 2 })}}
-            </td>
-            <td>
-              {{(importForm.value.tankerPrice?row.billed:0).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2, minimumFractionDigits: 2 })}}
-            </td>
-            <td *ngFor="let val of row.usage"
-              [ngClass]="{'zero': !val.reading, 'exceptional': val.reading > ((row?.unitAverage ?? 0) * 2.5) || val.reading < 0, 'average': val.useAverage}">
+            <td *ngFor="let val of unit.usage"
+              [ngClass]="{'zero': !val.reading, 'exceptional': val.reading > ((unit?.unitAverage ?? 0) * 2.5) || val.reading < 0, 'average': val.useAverage}">
               <label style="cursor: pointer;">
-                {{(val.useAverage ? row.unitAverage : val.reading).toLocaleString('en-IN', { minimumIntegerDigits: 1,
+                {{(val.useAverage ? unit.unitAverage : val.reading).toLocaleString('en-IN', { minimumIntegerDigits: 1,
                 maximumFractionDigits:2, minimumFractionDigits: 2 }) }}
-                <input type="checkbox" [checked]="val.useAverage" (click)="useAverageChanged($event, row.unitName, val.date)" />
+                <input type="checkbox" [checked]="val.useAverage" (click)="useAverageChanged($event, unit.unitName, val.date)" />
               </label>
             </td>
           </tr>
