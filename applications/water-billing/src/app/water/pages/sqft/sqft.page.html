@@ -1,0 +1,114 @@
+<div class="data-fields">
+  <div style="padding-block: 1rem;">
+    Please provide the information below to calculate the water billing for the block.
+  </div>
+  <div style="display: flex; flex-direction: row; gap: 1rem;">
+    <form [formGroup]="baseForm"
+      style="display: flex; flex-direction: column; gap: 0.25rem; flex-grow: 1; border: 1px solid black; padding: 0.25rem; border-radius: 0.25rem;">
+      <div style="padding: 0.25rem 0.5rem;">
+        <span>Import and Calculations</span>
+      </div>
+      <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+        <div class="field-set">
+          <label for="ohtInput">OHT Input (Litres)</label>
+          <input formControlName="ohtInput" type="number" name="ohtInput" id="ohtInput">
+        </div>
+        <div class="field-set">
+          <label for="tankerPrice">Tanker Price (Rs.)</label>
+          <input formControlName="tankerPrice" type="number" name="tankerPrice" id="tankerPrice">
+          <small><em>one tanker is equal to 6000 ltrs.</em></small>
+        </div>
+        <div class="field-set">
+          <label for="txtBlock">Block Name</label>
+          <select name="txtBlock" id="txtBlock" formControlName="blockName">
+            <option ngValue="" hidden>Select</option>
+            <option *ngFor="let block of blocks" [ngValue]="block.key">{{block.name}}</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+        <div class="field-set">
+          <label for="datePeriodFrom">Billing Period From</label>
+          <input formControlName="billingFrom" type="date" name="datePeriodFrom" id="datePeriodFrom">
+        </div>
+        <div class="field-set">
+          <label for="datePeriodTo">Billing Period From</label>
+          <input formControlName="billingTo" type="date" name="datePeriodTo" id="datePeriodTo">
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+        <div class="field-set">
+          <label for="dateCharged">Charge Date</label>
+          <input formControlName="billingDate" type="date" name="dateCharged" id="dateCharged">
+        </div>
+        <div class="field-set">
+          <label for="datePaymentLast">Last Date</label>
+          <input formControlName="dueDate" type="date" name="datePaymentLast" id="datePaymentLast">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div>
+  <div style="padding-block: 1rem; display: flex; justify-content: space-between; align-items: center;">
+    <span>please select a block above and fill the remaining values to calculate the billing.</span>
+    <div>
+      <button (click)="export()" class="button" [disabled]="!baseForm.valid">Export</button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div>
+      <table>
+        <!-- <tr style="border-top: 5px double #333;">
+          <td colspan="3">
+            <strong>Calculated Consumption:</strong>
+            <br>
+            <small>(Sum of Metered Totals and Averaged Totals)</small>
+          </td>
+          <td colspan="2">
+            {{calculatedConsumption.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
+            minimumFractionDigits: 2 })}}
+            <br>
+            <small>(Litres)</small>
+          </td>
+          <td colspan="3" *ngIf="importForm.value.ohtInput">
+            <strong>Consumption Variation:</strong>
+            <br>
+            <small>(OHT Input - Calculated)</small>
+          </td>
+          <td colspan="2" *ngIf="importForm.value.ohtInput">
+            {{(importForm.value.ohtInput ? importForm.value.ohtInput - calculatedConsumption : 0).toLocaleString('en-IN', {
+            minimumIntegerDigits: 1,
+            maximumFractionDigits:2,
+            minimumFractionDigits: 2 })}}
+            <br>
+            <small>(Litres)</small>
+          </td>
+        </tr> -->
+        <tr>
+          <th>Serial</th>
+          <th>Unit</th>
+          <th>Unit Area</th>
+          <th>Billed Amount</th>
+        </tr>
+        <tbody>
+          <tr *ngFor="let unit of sheet; let i = index">
+            <td> <!-- Serial -->
+              {{i + 1}}
+            </td>
+            <td>
+              {{unit.unitName}}
+            </td>
+            <td>
+              {{unit.area}}
+            </td>
+            <td>
+              {{(unit.billed).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2,
+              minimumFractionDigits: 2 })}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

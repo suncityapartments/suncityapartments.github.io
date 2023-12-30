@@ -1,69 +1,93 @@
-const blockList = [
+import { units } from './units';
+
+const blocks = [
   {
-    block: '01 - Magic Ray',
+    key: '01',
+    name: '01 - Magic Ray',
   },
   {
-    block: '02 - Pure Magic',
+    key: '02',
+    name: '02 - Pure Magic',
   },
   {
-    block: '03 - Zeal',
+    key: '03',
+    name: '03 - Zeal',
   },
   {
-    block: '04 - Zest',
+    key: '04',
+    name: '04 - Zest',
   },
   {
-    block: '05 - Harmony',
+    key: '05',
+    name: '05 - Harmony',
   },
   {
-    block: '06 - Celebration',
+    key: '06',
+    name: '06 - Celebration',
   },
   {
-    block: '07 - Treasure',
+    key: '07',
+    name: '07 - Treasure',
   },
   {
-    block: '08 - Meridian',
+    key: '08',
+    name: '08 - Meridian',
   },
   {
-    block: '09 - Galaxy',
+    key: '09',
+    name: '09 - Galaxy',
   },
   {
-    block: '10 - Zenith',
+    key: '10',
+    name: '10 - Zenith',
   },
   {
-    block: '11 - Lustre',
+    key: '11',
+    name: '11 - Lustre',
   },
   {
-    block: '12 - Diamond',
+    key: '12',
+    name: '12 - Diamond',
   },
   {
-    block: '13 - Gold Strike',
+    key: '13',
+    name: '13 - Gold Strike',
   },
   {
-    block: '14 - Dazzle',
+    key: '14',
+    name: '14 - Dazzle',
   },
   {
-    block: '15 - Brilliance',
+    key: '15',
+    name: '15 - Brilliance',
   },
   {
-    block: '16 - Zing',
+    key: '16',
+    name: '16 - Zing',
   },
   {
-    block: '17 - Star',
+    key: '17',
+    name: '17 - Star',
   },
   {
-    block: '18 - Glitter',
+    key: '18',
+    name: '18 - Glitter',
   },
   {
-    block: '19 - Sparkle',
+    key: '19',
+    name: '19 - Sparkle',
   },
   {
-    block: '20 - Radiance',
+    key: '20',
+    name: '20 - Radiance',
   },
   {
-    block: '21 - Zephyr',
+    key: '21',
+    name: '21 - Zephyr',
   },
 ];
 
 export const Data = {
-  blockList,
+  blocks,
+  units,
 };

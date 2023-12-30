@@ -6,8 +6,6 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 
 import { Data } from '../../data';
 
-type SheetTable = Array<Array<any>>;
-
 type UsageEntry = {
   date: string;
   reading: number;
@@ -31,15 +29,16 @@ type Unit = {
 };
 
 type Sheet = Array<Unit>;
+type SheetTable = Array<Array<any>>;
 
 @Component({
   selector: 'saoa-metered',
-  templateUrl: './metered.component.html',
-  styleUrls: ['./metered.component.scss'],
+  templateUrl: './metered.page.html',
+  styleUrls: ['./metered.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MeteredComponent {
-  public blockList = Data.blockList;
+export class MeteredPage {
+  public readonly blocks = Data.blocks;
   public sheet$ = new ReplaySubject<Sheet>();
   public sheet: Sheet | null = null;
   public dates: Array<string> = [];
@@ -237,7 +236,7 @@ export class MeteredComponent {
       const unitData = this.sheet
         .filter((unitData) => !unitData.isCommon)
         .map((unitData) => {
-          return [this.exportForm.value.blockName, unitData.unitName, 'Water Charges', `Water Charges for ${this.exportForm.value.billingFrom} to ${this.exportForm.value.billingTo}`, this.exportForm.value.billingDate, this.exportForm.value.dueDate, unitData.billed];
+          return [Data.blocks.find(block => block.key === this.exportForm.value.blockName)?.name, unitData.unitName, 'Water Charges', `Water Charges for ${this.exportForm.value.billingFrom} to ${this.exportForm.value.billingTo}`, this.exportForm.value.billingDate, this.exportForm.value.dueDate, unitData.billed];
         });
       exportData.push(...unitData);
 
@@ -248,7 +247,7 @@ export class MeteredComponent {
       XLSX.utils.book_append_sheet(wb, ws, this.exportForm.value.blockName);
 
       // /* save to file */
-      XLSX.writeFile(wb, `water bill ${this.exportForm.value.blockName.toLowerCase()} - ${this.exportForm.value.billingFrom} to ${this.exportForm.value.billingTo}.xlsx`);
+      XLSX.writeFile(wb, `water bill ${Data.blocks.find(block => block.key === this.exportForm.value.blockName)?.name.toLowerCase()} - ${this.exportForm.value.billingFrom} to ${this.exportForm.value.billingTo}.xlsx`);
     }
   }
 

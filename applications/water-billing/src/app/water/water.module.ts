@@ -1,22 +1,23 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { WaterRoutingModule } from './water-routing.module';
-import { WaterComponent } from './water.component';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MeteredComponent } from './pages/metered/metered.component';
 
+import { MeteredPage } from './pages/metered/metered.page';
+import { SQFTPage } from './pages/sqft/sqft.page';
+import { WaterRoutingModule } from './water-routing.module';
+import { WaterPage } from './water.page';
 
 @NgModule({
   declarations: [
-    WaterComponent,
-    MeteredComponent
+    WaterPage,
+    MeteredPage,
+    SQFTPage,
   ],
   imports: [
     CommonModule,
     WaterRoutingModule,
     FormsModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
 export class WaterModule { }

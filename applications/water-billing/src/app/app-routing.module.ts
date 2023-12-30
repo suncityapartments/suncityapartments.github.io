@@ -4,10 +4,18 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'water',
-    pathMatch: 'full',
+    children: [
+      {
+        path: '',
+        redirectTo: 'water',
+        pathMatch: 'full',
+      },
+      {
+        path: 'water',
+        loadChildren: () => import('./water/water.module').then(m => m.WaterModule),
+      },
+    ],
   },
-  { path: 'water', loadChildren: () => import('./water/water.module').then(m => m.WaterModule) },
 ];
 
 @NgModule({

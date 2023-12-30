@@ -2,7 +2,7 @@
   <div style="padding-block: 1rem;">
     Please provide the information below to calculate the water billing for the block.
   </div>
-  <div style="display: flex; flex-direction: row; gap: 0.25rem;">
+  <div style="display: flex; flex-direction: row; gap: 1rem;">
     <form [formGroup]="importForm"
       style="display: flex; flex-direction: column; gap: 0.25rem; flex-grow: 1; border: 1px solid black; padding: 0.25rem; border-radius: 0.25rem;">
       <div style="padding: 0.25rem 0.5rem;">
@@ -13,8 +13,9 @@
         <input formControlName="ohtInput" type="number" name="ohtInput" id="ohtInput">
       </div>
       <div class="field-set">
-        <label for="tankerPrice">Tanker Price (Rs.) <small><em>one tanker is equal to 6000 ltrs.</em></small></label>
+        <label for="tankerPrice">Tanker Price (Rs.)</label>
         <input formControlName="tankerPrice" type="number" name="tankerPrice" id="tankerPrice">
+        <small><em>one tanker is equal to 6000 ltrs.</em></small>
       </div>
       <div class="field-set">
         <label for="importFile">Vendor Report</label><br>
@@ -33,7 +34,7 @@
         <label for="txtBlock">Block Name</label>
         <select name="txtBlock" id="txtBlock" formControlName="blockName">
           <option ngValue="" hidden>Select</option>
-          <option *ngFor="let block of blockList" [ngValue]="block.block">{{block.block}}</option>
+          <option *ngFor="let block of blocks" [ngValue]="block.key">{{block.name}}</option>
         </select>
       </div>
       <div style="display: flex; flex-direction: row; gap: 0.25rem;">
@@ -48,8 +49,8 @@
       </div>
       <div style="display: flex; flex-direction: row; gap: 0.25rem;">
         <div class="field-set">
-          <label for="dateChagred">Charge Date</label>
-          <input formControlName="billingDate" type="date" name="dateChagred" id="dateChagred">
+          <label for="dateCharged">Charge Date</label>
+          <input formControlName="billingDate" type="date" name="dateCharged" id="dateCharged">
         </div>
         <div class="field-set">
           <label for="datePaymentLast">Last Date</label>
@@ -126,6 +127,9 @@
             </td>
             <td>
               {{unit.measuredTotal.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2, minimumFractionDigits: 2 })}}
+            </td>
+            <td>
+              {{(importForm.value.ohtInput ? unit.variation : 0).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2, minimumFractionDigits: 2 })}}
             </td>
             <td>
               {{unit.unitAverage.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2, minimumFractionDigits: 2 })}}
