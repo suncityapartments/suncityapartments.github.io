@@ -1513,12 +1513,6 @@ export const units = [
   },
   {
     'block': '06',
-    'unitName': '0XX',
-    'type': 'Others',
-    'area': 8369,
-  },
-  {
-    'block': '06',
     'unitName': '1001',
     'type': '1 BHK',
     'area': 677,
@@ -1795,12 +1789,6 @@ export const units = [
   },
   {
     'block': '06',
-    'unitName': '3XX',
-    'type': 'Others',
-    'area': 12196,
-  },
-  {
-    'block': '06',
     'unitName': '401',
     'type': '1 BHK',
     'area': 677,
@@ -1882,12 +1870,6 @@ export const units = [
     'unitName': '414',
     'type': '1 BHK',
     'area': 844,
-  },
-  {
-    'block': '06',
-    'unitName': '4XX',
-    'type': 'Others',
-    'area': 6141,
   },
   {
     'block': '06',
@@ -1981,12 +1963,6 @@ export const units = [
   },
   {
     'block': '06',
-    'unitName': '5XX',
-    'type': 'Others',
-    'area': 12196,
-  },
-  {
-    'block': '06',
     'unitName': '601',
     'type': '1 BHK',
     'area': 677,
@@ -2071,12 +2047,6 @@ export const units = [
   },
   {
     'block': '06',
-    'unitName': '6XX',
-    'type': 'Others',
-    'area': 12196,
-  },
-  {
-    'block': '06',
     'unitName': '701',
     'type': '1 BHK',
     'area': 677,
@@ -2158,12 +2128,6 @@ export const units = [
     'unitName': '714',
     'type': '1 BHK',
     'area': 844,
-  },
-  {
-    'block': '06',
-    'unitName': '7XX',
-    'type': 'Others',
-    'area': 12196,
   },
   {
     'block': '06',
