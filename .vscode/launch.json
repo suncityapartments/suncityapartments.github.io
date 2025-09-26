@@ -8,7 +8,7 @@
       "request": "launch",
       "url": "http://localhost:4200",
       "userDataDir": true,
-      "preLaunchTask": "Launch Delay"
+      "preLaunchTask": "Serve App"
     },
   ]
 }

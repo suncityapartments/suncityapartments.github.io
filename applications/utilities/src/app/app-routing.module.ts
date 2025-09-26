@@ -12,7 +12,7 @@ const routes: Routes = [
       },
       {
         path: 'water',
-        loadChildren: () => import('./water/water.module').then(m => m.WaterModule),
+        loadChildren: () => import('./modules/water/water.module').then(m => m.WaterModule),
       },
     ],
   },

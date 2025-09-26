@@ -69,7 +69,7 @@
   "typescript.tsc.autoDetect": "off",
   "typescript.tsserver.maxTsServerMemory": 4096,
   "liveServer.settings.port": 4200,
-  "liveServer.settings.root": "./dist/water-billing",
+  "liveServer.settings.root": "./dist/utilites",
   "cSpell.words": [
     "SQFT"
   ],
