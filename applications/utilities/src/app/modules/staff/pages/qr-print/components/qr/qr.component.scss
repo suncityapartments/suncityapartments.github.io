@@ -15,7 +15,7 @@
 
       &>.qr__reset {
         position: absolute;
-        background: red;
+        background: #ee6c4d;
         padding: 2mm;
         border-radius: 50%;
         width: 10mm;
@@ -33,6 +33,7 @@
 
       &>img {
         width: 100%;
+        display: block;
       }
     }
 
@@ -51,7 +52,7 @@
 
   @media print {
     .qr__reset {
-      display: none;
+      display: none !important;
     }
   }
 }
