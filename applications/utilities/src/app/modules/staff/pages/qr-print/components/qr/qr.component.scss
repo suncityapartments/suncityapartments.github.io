@@ -13,7 +13,7 @@
       aspect-ratio: 1 / 1;
       position: relative;
 
-      &>.qr__reset {
+      &>.qr__action {
         position: absolute;
         background: #ee6c4d;
         padding: 2mm;
@@ -29,6 +29,19 @@
         color: #fff;
         font-size: 2rem;
         line-height: 3mm;
+
+        &.arrow {
+          line-height: 6mm;
+          background-color: #3d5a80;
+
+          &::after {
+            content: 'select';
+            font-size: 1rem;
+            color: #3d5a80;
+            position: absolute;
+            top: calc(100%);
+          }
+        }
       }
 
       &>img {
@@ -43,7 +56,7 @@
 
     &:hover {
       &>.qr__code {
-        &>.qr__reset {
+        &>.qr__action {
           display: flex;
         }
       }
@@ -51,7 +64,7 @@
   }
 
   @media print {
-    .qr__reset {
+    .qr__action {
       display: none !important;
     }
   }

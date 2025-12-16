@@ -1,17 +1,25 @@
-import { Component, computed, HostBinding, HostListener, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  HostBinding,
+  HostListener,
+  signal,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
-    selector: '.saoa-qr',
-    templateUrl: './qr.component.html',
-    styleUrl: './qr.component.scss',
-    standalone: false
+  selector: '[saoa-qr]',
+  templateUrl: './qr.component.html',
+  styleUrl: './qr.component.scss',
+  standalone: false,
 })
 export class QRComponent {
   protected isDragOver = false;
   protected imageSrc: string | ArrayBuffer | null = null;
   protected selectedFile = signal<File | null>(null);
   protected selectedFileName = computed(() => this.selectedFile() ? this.getFileNameWithoutExtension(this.selectedFile()?.name) : 'no qr code');
-
+  @ViewChild('fileInput') fileInput!: ElementRef;
   @HostBinding('class.no-print')
   get color() {
     return !this.selectedFile();
@@ -132,5 +140,10 @@ export class QRComponent {
   protected onReset() {
     this.imageSrc = null;
     this.selectedFile.set(null);
+    this.fileInput.nativeElement.value = null;
+  }
+
+  protected onSelect() {
+    this.fileInput.nativeElement.click();
   }
 }
