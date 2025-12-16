@@ -22,7 +22,9 @@
           <label for="txtBlock">Block Name</label>
           <select name="txtBlock" id="txtBlock" formControlName="blockName">
             <option ngValue="" hidden>Select</option>
-            <option *ngFor="let block of blocks" [ngValue]="block.key">{{block.name}}</option>
+            @for (block of blocks; track block) {
+              <option [ngValue]="block.key">{{block.name}}</option>
+            }
           </select>
         </div>
       </div>
@@ -60,55 +62,57 @@
     <div>
       <table>
         <!-- <tr style="border-top: 5px double #333;">
-          <td colspan="3">
-            <strong>Calculated Consumption:</strong>
-            <br>
+        <td colspan="3">
+          <strong>Calculated Consumption:</strong>
+          <br>
             <small>(Sum of Metered Totals and Averaged Totals)</small>
           </td>
           <td colspan="2">
             {{calculatedConsumption.toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits:2,
             minimumFractionDigits: 2 })}}
             <br>
-            <small>(Litres)</small>
-          </td>
-          <td colspan="3" *ngIf="importForm.value.ohtInput">
-            <strong>Consumption Variation:</strong>
-            <br>
-            <small>(OHT Input - Calculated)</small>
-          </td>
-          <td colspan="2" *ngIf="importForm.value.ohtInput">
-            {{(importForm.value.ohtInput ? importForm.value.ohtInput - calculatedConsumption : 0).toLocaleString('en-IN', {
-            minimumIntegerDigits: 1,
-            maximumFractionDigits:2,
-            minimumFractionDigits: 2 })}}
-            <br>
-            <small>(Litres)</small>
-          </td>
-        </tr> -->
-        <tr>
-          <th>Serial</th>
-          <th>Unit</th>
-          <th>Unit Area</th>
-          <th>Billed Amount</th>
-        </tr>
-        <tbody>
-          <tr *ngFor="let unit of sheet; let i = index">
-            <td> <!-- Serial -->
-              {{i + 1}}
+              <small>(Litres)</small>
             </td>
-            <td>
-              {{unit.unitName}}
-            </td>
-            <td>
-              {{unit.area}}
-            </td>
-            <td>
-              {{(unit.billed).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2,
-              minimumFractionDigits: 2 })}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+            <td colspan="3" *ngIf="importForm.value.ohtInput">
+              <strong>Consumption Variation:</strong>
+              <br>
+                <small>(OHT Input - Calculated)</small>
+              </td>
+              <td colspan="2" *ngIf="importForm.value.ohtInput">
+                {{(importForm.value.ohtInput ? importForm.value.ohtInput - calculatedConsumption : 0).toLocaleString('en-IN', {
+                minimumIntegerDigits: 1,
+                maximumFractionDigits:2,
+                minimumFractionDigits: 2 })}}
+                <br>
+                  <small>(Litres)</small>
+                </td>
+              </tr> -->
+              <tr>
+                <th>Serial</th>
+                <th>Unit</th>
+                <th>Unit Area</th>
+                <th>Billed Amount</th>
+              </tr>
+              <tbody>
+                @for (unit of sheet; track unit; let i = $index) {
+                  <tr>
+                    <td> <!-- Serial -->
+                      {{i + 1}}
+                    </td>
+                    <td>
+                      {{unit.unitName}}
+                    </td>
+                    <td>
+                      {{unit.area}}
+                    </td>
+                    <td>
+                      {{(unit.billed).toLocaleString('en-IN', { minimumIntegerDigits: 1, maximumFractionDigits: 2,
+                      minimumFractionDigits: 2 })}}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
