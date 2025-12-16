@@ -1,10 +1,6 @@
-:host {
-  height: 100%;
-}
-
-.header__main {
+.header__staff {
   padding: 0 1rem;
-  background-color: #3d5a80;
+  background-color: #98c1d9;
   color: aliceblue;
   font-weight: 500;
   font-size: 1.2rem;
@@ -26,20 +22,21 @@
 
   a {
     font-weight: 400 !important;
-    font-size: 1rem;
+    font-size: 0.8rem;
 
     &.tab {
       display: inline-block;
       text-decoration: none;
-      padding: 0.75rem 1.5rem;
+      padding: 0.55rem 0.75rem;
       color: #fff9;
 
       &.selected {
-        border-bottom: 0.5rem solid #98c1d9;
-        border-left: 0.5rem solid transparent;
-        border-right: 0.5rem solid transparent;
-        border-top: 0.5rem solid transparent;
-        color: #98c1d9;
+        font-weight: 600 !important;
+        border-bottom: 0.25rem solid #fff;
+        border-left: 0.25rem solid transparent;
+        border-right: 0.25rem solid transparent;
+        border-top: 0.25rem solid transparent;
+        color: #fff;
       }
     }
   }

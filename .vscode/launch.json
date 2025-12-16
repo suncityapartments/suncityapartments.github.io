@@ -2,13 +2,30 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+    // {
+    //   "name": "Debug - Web",
+    //   "type": "chrome",
+    //   "request": "launch",
+    //   "url": "http://localhost:4200",
+    //   "userDataDir": true
+    // },
+    // {
+    //   "name": "Debug - Web",
+    //   "type": "pwa-chrome",
+    //   "request": "launch",
+    //   "url": "http://localhost:4200",
+    //   "userDataDir": false
+    // },
     {
       "name": "Debug - Web",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4200",
-      "userDataDir": true,
-      "preLaunchTask": "Serve App"
+      "runtimeExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", // adjust path for your OS
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "--user-data-dir=${workspaceFolder}/.vscode/chrome-profile"
+      ]
     },
   ]
 }

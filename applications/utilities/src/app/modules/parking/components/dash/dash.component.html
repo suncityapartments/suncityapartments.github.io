@@ -1,0 +1,8 @@
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error" class="text-danger">{{ error }}</div>
+
+<table class="table table-bordered" *ngIf="rows.length">
+  <tr *ngFor="let row of rows">
+    <td *ngFor="let cell of row">{{ cell }}</td>
+  </tr>
+</table>

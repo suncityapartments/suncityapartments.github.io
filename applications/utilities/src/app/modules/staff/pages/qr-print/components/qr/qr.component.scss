@@ -1,0 +1,25 @@
+:host-context(.page__margin) {
+  &>:host {
+    min-width: 30mm;
+    border: 1px solid lightgray;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2mm;
+    padding: 2mm;
+
+    &>.qr__code {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+
+      &>img {
+        width: 100%;
+      }
+    }
+
+    &>.qr__id {
+      font-size: 0.8rem;
+    }
+  }
+
+}

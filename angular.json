@@ -41,11 +41,12 @@
       "prefix": "saoa",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/utilities",
+            "outputPath": {
+              "base": "dist/utilities"
+            },
             "index": "applications/utilities/src/index.html",
-            "main": "applications/utilities/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -58,7 +59,8 @@
             "styles": [
               "applications/utilities/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "applications/utilities/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -78,9 +80,7 @@
             },
             "development": {
               "outputHashing": "all",
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -89,7 +89,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "utilities:build:production"
@@ -101,7 +101,7 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "utilities:build"
           }

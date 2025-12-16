@@ -7,12 +7,20 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'water',
+        redirectTo: 'staff',
         pathMatch: 'full',
       },
       {
         path: 'water',
         loadChildren: () => import('./modules/water/water.module').then(m => m.WaterModule),
+      },
+      {
+        path: 'parking',
+        loadChildren: () => import('./modules/parking/parking.module').then(m => m.ParkingModule),
+      },
+      {
+        path: 'staff',
+        loadChildren: () => import('./modules/staff/staff.module').then(m => m.StaffModule),
       },
     ],
   },

@@ -15,8 +15,8 @@ body {
 }
 
 *,
-* > * {
-  font-family: 'Montserrat', sans-serif; 
+*>* {
+  font-family: 'Montserrat', sans-serif;
   box-sizing: border-box;
 }
 
@@ -40,3 +40,9 @@ input[type=number] {
   appearance: textfield;
   -moz-appearance: textfield;
 }
+
+// @media print {
+//   body * {
+//     visibility: hidden;
+//   }
+// }
