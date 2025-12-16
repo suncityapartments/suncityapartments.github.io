@@ -32,10 +32,11 @@ type Sheet = Array<Unit>;
 type SheetTable = Array<Array<any>>;
 
 @Component({
-  selector: 'saoa-metered',
-  templateUrl: './metered.page.html',
-  styleUrls: ['./metered.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'saoa-metered',
+    templateUrl: './metered.page.html',
+    styleUrls: ['./metered.page.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class MeteredPage {
   public readonly blocks = Data.blocks;

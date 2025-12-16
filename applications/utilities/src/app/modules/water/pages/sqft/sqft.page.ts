@@ -16,10 +16,11 @@ type Sheet = Array<Unit>;
 type SheetTable = Array<Array<any>>;
 
 @Component({
-  selector: 'saoa-sqft',
-  templateUrl: './sqft.page.html',
-  styleUrl: './sqft.page.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'saoa-sqft',
+    templateUrl: './sqft.page.html',
+    styleUrl: './sqft.page.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SQFTPage {
   public readonly blocks = Data.blocks;

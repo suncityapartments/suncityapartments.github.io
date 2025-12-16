@@ -1,9 +1,10 @@
 import { Component, computed, HostBinding, HostListener, signal } from '@angular/core';
 
 @Component({
-  selector: '.saoa-qr',
-  templateUrl: './qr.component.html',
-  styleUrl: './qr.component.scss',
+    selector: '.saoa-qr',
+    templateUrl: './qr.component.html',
+    styleUrl: './qr.component.scss',
+    standalone: false
 })
 export class QRComponent {
   protected isDragOver = false;
