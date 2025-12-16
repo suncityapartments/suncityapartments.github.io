@@ -1,5 +1,10 @@
 <div class="qr__code" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
   <img [src]="this.imageSrc" alt="qr code" [style.visibility]="this.imageSrc?'visible':'hidden'">
+  @if (this.selectedFile()) {
+  <div class="qr__reset" (click)="onReset()">
+    &times;
+  </div>
+  }
 </div>
 <div class="qr__id">
   {{this.selectedFileName()}}

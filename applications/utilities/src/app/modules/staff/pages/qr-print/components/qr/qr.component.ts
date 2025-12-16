@@ -127,4 +127,9 @@ export class QRComponent {
 
     return false;
   }
+
+  protected onReset() {
+    this.imageSrc = null;
+    this.selectedFile.set(null);
+  }
 }

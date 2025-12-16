@@ -3,7 +3,7 @@
   height: 100%;
   overflow: auto;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   gap: 10mm;
 
   &>.page {
@@ -22,7 +22,7 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       align-content: start;
-      align-content: start;
+      justify-content: start;
       gap: 5mm;
     }
   }

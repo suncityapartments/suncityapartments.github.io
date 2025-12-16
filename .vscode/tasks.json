@@ -5,6 +5,10 @@
     {
       "label": "Serve App",
       "type": "npm",
+      "group": {
+        "isDefault": true,
+        "kind": "build"
+      },
       "script": "start",
       "isBackground": true,
       "problemMatcher": {

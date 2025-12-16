@@ -11,6 +11,25 @@
     &>.qr__code {
       width: 100%;
       aspect-ratio: 1 / 1;
+      position: relative;
+
+      &>.qr__reset {
+        position: absolute;
+        background: red;
+        padding: 2mm;
+        border-radius: 50%;
+        width: 10mm;
+        aspect-ratio: 1 / 1;
+        top: calc(50% - 5mm);
+        left: calc(50% - 5mm);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        color: #fff;
+        font-size: 2rem;
+        line-height: 3mm;
+      }
 
       &>img {
         width: 100%;
@@ -20,6 +39,19 @@
     &>.qr__id {
       font-size: 0.8rem;
     }
+
+    &:hover {
+      &>.qr__code {
+        &>.qr__reset {
+          display: flex;
+        }
+      }
+    }
   }
 
+  @media print {
+    .qr__reset {
+      display: none;
+    }
+  }
 }
